@@ -33,11 +33,11 @@ export interface IEliVersionInfo {
 const authToken = core.getInput('token');
 const octokit = new Octokit(authToken ? {auth: authToken} : {});
 
-export async function getEli(versionSpec: string, arch = os.arch()) {
+export async function getEli(versionSpec: string, arch = os.arch(), prerelease = false) {
   const osPlat: string = os.platform();
 
   if (versionSpec === undefined || versionSpec === ReleaseAlias.Latest) {
-    const version = await resolveLatestVersion(ReleaseAlias.Latest, arch);
+    const version = await resolveLatestVersion(ReleaseAlias.Latest, arch, prerelease);
     core.info(`${ReleaseAlias.Latest} version resolved as ${version}`);
     if (version) {
       versionSpec = version;
@@ -193,7 +193,7 @@ export async function getAvailableVersions(): Promise<IEliVersion[] | null> {
       return semver.gt(aVersion, bVersion) ? -1 : 1;
     });
 
-  // parse releasese to IEliVersion[]
+  // parse releases to IEliVersion[]
   return releases.map(release => {
     const version = release.tag_name.replace('v', '');
     const files = release.assets.map(asset => {
@@ -239,7 +239,7 @@ export function makeSemver(version: string): string {
   return fullVersion;
 }
 
-async function resolveLatestVersion(versionSpec: string, arch: string) {
+async function resolveLatestVersion(versionSpec: string, arch: string, prerelease = false) {
   const archFilter = sys.getArch(arch);
   const platFilter = sys.getPlatform();
 
@@ -260,7 +260,8 @@ async function resolveLatestVersion(versionSpec: string, arch: string) {
     versionSpec,
     archFilter,
     platFilter,
-    fixedCandidates
+    fixedCandidates,
+    prerelease
   );
 
   return stableVersion;
@@ -270,7 +271,8 @@ export async function resolveStableVersionInput(
   versionSpec: string,
   arch: string,
   platform: string,
-  manifest: tc.IToolRelease[] | IEliVersion[]
+  manifest: tc.IToolRelease[] | IEliVersion[],
+  prerelease = false
 ) {
   const releases = manifest
     .map(item => {
@@ -282,7 +284,7 @@ export async function resolveStableVersionInput(
       }
       return item.version;
     })
-    .filter(item => !!item && !semver.prerelease(item));
+    .filter(item => !!item && (!semver.prerelease(item) || prerelease));
   core.debug(`versionSpec: ${versionSpec}, releases: ${releases.join(', ')}`);
   switch (versionSpec) {
     case ReleaseAlias.Latest:

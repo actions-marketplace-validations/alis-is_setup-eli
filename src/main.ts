@@ -18,8 +18,9 @@ export async function run() {
     if (!arch) {
       arch = os.arch();
     }
+    const prerelease = core.getInput('prerelease') === 'true' ? true : false;
 
-    const installDir = await installer.getEli(versionSpec, arch);
+    const installDir = await installer.getEli(versionSpec, arch, prerelease);
 
     core.addPath(installDir);
     core.info(`Added eli to the path`);
