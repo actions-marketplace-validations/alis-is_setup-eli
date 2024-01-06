@@ -15,5 +15,6 @@ steps:
   - uses: actions/setup-eli@v0
     with:
       eli-version: '0.29.1' # The eli version to download (if necessary) and use.
+      prerelease: true # Whether to use a pre-release version of eli. (only aplicable if eli-version is latest)
   - run: eli -v
 ```
