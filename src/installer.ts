@@ -33,11 +33,19 @@ export interface IEliVersionInfo {
 const authToken = core.getInput('token');
 const octokit = new Octokit(authToken ? {auth: authToken} : {});
 
-export async function getEli(versionSpec: string, arch = os.arch(), prerelease = false) {
+export async function getEli(
+  versionSpec: string,
+  arch = os.arch(),
+  prerelease = false
+) {
   const osPlat: string = os.platform();
 
   if (versionSpec === undefined || versionSpec === ReleaseAlias.Latest) {
-    const version = await resolveLatestVersion(ReleaseAlias.Latest, arch, prerelease);
+    const version = await resolveLatestVersion(
+      ReleaseAlias.Latest,
+      arch,
+      prerelease
+    );
     core.info(`${ReleaseAlias.Latest} version resolved as ${version}`);
     if (version) {
       versionSpec = version;
@@ -239,7 +247,11 @@ export function makeSemver(version: string): string {
   return fullVersion;
 }
 
-async function resolveLatestVersion(versionSpec: string, arch: string, prerelease = false) {
+async function resolveLatestVersion(
+  versionSpec: string,
+  arch: string,
+  prerelease = false
+) {
   const archFilter = sys.getArch(arch);
   const platFilter = sys.getPlatform();
 
