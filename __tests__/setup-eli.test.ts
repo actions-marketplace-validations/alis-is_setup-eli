@@ -415,7 +415,9 @@ describe('setup-eli', () => {
         // ... but not in the local cache
         findSpy.mockImplementation(() => '');
 
-        dlSpy.mockImplementation(async () => path.join(osm.tmpdir(), `eli${fileExtension}`));
+        dlSpy.mockImplementation(async () =>
+          path.join(osm.tmpdir(), `eli${fileExtension}`)
+        );
         renameFileSpy.mockImplementation(() => {});
         cacheSpy.mockImplementation(async () => '');
         execSpy.mockImplementation(() => `eli ${version}`);
