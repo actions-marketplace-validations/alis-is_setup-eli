@@ -202,6 +202,10 @@ describe('setup-eli', () => {
       throw new Error(errMsg);
     });
     await main.run();
+
+    expect(process.exitCode).toBe(1);
+    process.exitCode = undefined; // https://github.com/MatrixAI/Polykey-CLI/pull/137
+
     expect(cnSpy).toHaveBeenCalledWith('::error::' + errMsg + osm.EOL);
   });
 
@@ -411,7 +415,7 @@ describe('setup-eli', () => {
         // ... but not in the local cache
         findSpy.mockImplementation(() => '');
 
-        dlSpy.mockImplementation(async () => '/some/temp/path');
+        dlSpy.mockImplementation(async () => path.join(osm.tmpdir(), `eli${fileExtension}`));
         renameFileSpy.mockImplementation(() => {});
         cacheSpy.mockImplementation(async () => '');
         execSpy.mockImplementation(() => `eli ${version}`);
