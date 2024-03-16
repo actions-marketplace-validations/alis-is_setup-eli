@@ -15,6 +15,6 @@ outputs:
   eli-version:
     description: 'The installed eli version. Useful when given a version range as input.'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/setup/index.js'
 
