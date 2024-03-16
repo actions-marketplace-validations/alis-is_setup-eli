@@ -167,7 +167,7 @@ describe('setup-eli', () => {
 
     const toolPath = path.normalize('/cache/eli/0.29.0/x64');
     findSpy.mockImplementation(() => toolPath);
-    execSpy.mockImplementation(() => '0.29.0');
+    execSpy.mockImplementation(() => 'eli 0.29.0');
     await main.run();
 
     expect(logSpy).toHaveBeenCalledWith(`Setup eli version spec 0.29.0`);
@@ -178,7 +178,7 @@ describe('setup-eli', () => {
 
     const toolPath = path.normalize('/cache/eli/0.29.0/x86_64');
     findSpy.mockImplementation(() => toolPath);
-    execSpy.mockImplementation(() => '0.29.0');
+    execSpy.mockImplementation(() => 'eli 0.29.0');
     await main.run();
 
     expect(logSpy).toHaveBeenCalledWith(`Found in cache @ ${toolPath}`);
@@ -188,7 +188,7 @@ describe('setup-eli', () => {
     inputs['eli-version'] = '0.29.2';
     const toolPath = path.normalize('/cache/eli/0.29.2/x64');
     findSpy.mockImplementation(() => toolPath);
-    execSpy.mockImplementation(() => '0.29.2');
+    execSpy.mockImplementation(() => 'eli 0.29.2');
     await main.run();
 
     expect(cnSpy).toHaveBeenCalledWith(`::add-path::${toolPath}${osm.EOL}`);
@@ -215,7 +215,7 @@ describe('setup-eli', () => {
     const toolPath = path.normalize('/cache/eli/0.29.0/x64');
     cacheSpy.mockImplementation(() => toolPath);
     renameFileSpy.mockImplementation(() => '/some/temp/eli');
-    execSpy.mockImplementation(() => '0.29.0');
+    execSpy.mockImplementation(() => 'eli 0.29.0');
     mkdirSpy.mockImplementation(() => {});
 
     await main.run();
@@ -237,7 +237,7 @@ describe('setup-eli', () => {
 
     const toolPath = path.normalize('C:\\cache\\eli\\0.29.1\\x64');
     cacheSpy.mockImplementation(() => toolPath);
-    execSpy.mockImplementation(() => '0.29.1');
+    execSpy.mockImplementation(() => 'eli 0.29.1');
     await main.run();
 
     expect(dlSpy).toHaveBeenCalledWith(
@@ -256,6 +256,8 @@ describe('setup-eli', () => {
 
     findSpy.mockImplementation(() => '');
     await main.run();
+    expect(process.exitCode).toBe(1);
+    process.exitCode = undefined; // https://github.com/MatrixAI/Polykey-CLI/pull/137
 
     expect(cnSpy).toHaveBeenCalledWith(
       `::error::Unable to find eli version '9.99.9' for platform linux and architecture x64.${osm.EOL}`
@@ -278,7 +280,7 @@ describe('setup-eli', () => {
     const toolPath = path.normalize('/cache/eli/0.29.0/x64');
     renameFileSpy.mockImplementation(() => {});
     cacheSpy.mockImplementation(async () => toolPath);
-    execSpy.mockImplementation(() => '0.29.0');
+    execSpy.mockImplementation(() => 'eli 0.29.0');
     mkdirSpy.mockImplementation(() => {});
     await main.run();
 
@@ -303,8 +305,10 @@ describe('setup-eli', () => {
     dlSpy.mockImplementation(() => {
       throw new Error(errMsg);
     });
-    execSpy.mockImplementation(() => '0.29.0');
+    execSpy.mockImplementation(() => 'eli 0.29.0');
     await main.run();
+    expect(process.exitCode).toBe(1);
+    process.exitCode = undefined; // https://github.com/MatrixAI/Polykey-CLI/pull/137
 
     expect(cnSpy).toHaveBeenCalledWith(
       `::error::Failed to download version 0.29.0: Error: ${errMsg}${osm.EOL}`
@@ -329,7 +333,7 @@ describe('setup-eli', () => {
       const toolPath = path.normalize('/cache/eli/0.29.1/x64');
       cacheSpy.mockImplementation(() => toolPath);
       renameFileSpy.mockImplementation(() => '/some/temp/eli');
-      execSpy.mockImplementation(() => '0.29.1');
+      execSpy.mockImplementation(() => 'eli 0.29.1');
       await main.run();
 
       expect(logSpy).toHaveBeenCalledWith('Setup eli version spec 0.29.1');
@@ -352,7 +356,7 @@ describe('setup-eli', () => {
       const toolPath = path.normalize('/cache/eli/0.29.0/x64');
       cacheSpy.mockImplementation(() => toolPath);
       renameFileSpy.mockImplementation(() => '/some/temp/eli');
-      execSpy.mockImplementation(() => '0.29.0');
+      execSpy.mockImplementation(() => 'eli 0.29.0');
       await main.run();
 
       expect(logSpy).toHaveBeenCalledWith('Setup eli version spec 0.29.0');
@@ -378,6 +382,8 @@ describe('setup-eli', () => {
       existsSpy.mockImplementation(() => false);
 
       await main.run();
+      expect(process.exitCode).toBe(1);
+      process.exitCode = undefined; // https://github.com/MatrixAI/Polykey-CLI/pull/137
 
       expect(cnSpy).toHaveBeenCalledWith(
         `::error::The specified eli version file at: .eli-version does not exist${osm.EOL}`

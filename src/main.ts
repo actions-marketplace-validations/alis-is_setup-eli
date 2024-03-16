@@ -26,7 +26,7 @@ export async function run() {
     core.info(`Added eli to the path`);
 
     const eliPath = await io.which('eli');
-    const eliVersion = (cp.execSync(`${eliPath} -v`) || versionSpec).toString();
+    const eliVersion = cp.execSync(`${eliPath} -v`).toString();
 
     // output the version actually being used
     core.info(eliVersion);
